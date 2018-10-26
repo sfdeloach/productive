@@ -1,23 +1,13 @@
 // import node modules
-const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
+const express = require('express');
 const morgan = require('morgan');
-
-// import api router files
-const userAPI = require('./api/users');
-const employeeAPI = require('./api/employees');
-const assetAPI = require('./api/assets');
-const phosphorusAPI = require('./api/phosphorus');
-const silverAPI = require('./api/silver');
-const tungstenAPI = require('./api/tungsten');
+const path = require('path');
 
 // define application constants
-const port = 3000;
-const viewOptions = {
-  root: path.join(__dirname, '/views/'),
-  index: 'undefined'
-};
+const port = process.env.PORT || 3000;
+const spaOptions = { root: path.join(__dirname, '/spas/') };
+const viewOptions = { root: path.join(__dirname, '/views/') };
 
 // create application
 const app = express();
@@ -40,22 +30,22 @@ app.get('/logout', (req, res) => {
 
 // define single page application routes
 app.get('/phosphorus', (req, res) =>
-  res.sendFile('./views/phosphorus.html', viewOptions)
+  res.sendFile('./phosphorus/index.html', spaOptions)
 );
 app.get('/silver', (req, res) =>
-  res.sendFile('./views/silver.html', viewOptions)
+  res.sendFile('./silver/index.html', spaOptions)
 );
 app.get('/tungsten', (req, res) =>
-  res.sendFile('./views/tungsten.html', viewOptions)
+  res.sendFile('./tungsten/index.html', spaOptions)
 );
 
 // define api routes
-app.use('/api/assets', assetAPI);
-app.use('/api/employees', employeeAPI);
-app.use('/api/phosphorus', phosphorusAPI);
-app.use('/api/silver', silverAPI);
-app.use('/api/tungste', tungstenAPI);
-app.use('/api/users', userAPI);
+app.use('/api/assets', require('./api/assets'));
+app.use('/api/employees', require('./api/employees'));
+app.use('/api/phosphorus', require('./api/phosphorus'));
+app.use('/api/silver', require('./api/silver'));
+app.use('/api/tungsten', require('./api/tungsten'));
+app.use('/api/users', require('./api/users'));
 
 // start application
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
