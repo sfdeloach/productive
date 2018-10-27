@@ -1,26 +1,31 @@
-// TODO
+// TODO:
 //
+// demonstrate api call work within angular app
 // passport w/ dummy db
 // mongoose w/ real db
 
 // import node modules
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const express = require('express');
+const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 
 // discover env variables and initialize application
-const port = process.env.PORT || 3000;
 // const dbConnection = process.env.DATABASE_URL || 'mongod://localhost:27017/flaltamontespringspd'
+const port = process.env.PORT || 3000;
 const app = express();
 
 // public access to static files (CSS, images, JavaScript)
 app.use(express.static(path.join(__dirname, 'views/phosphorus')));
 
 // add middleware
-app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(helmet());
+app.use(cors({ origin: 'http://localhost:4200' }));
 
 // define main routes
 app.get('/', (req, res) =>
@@ -38,6 +43,9 @@ app.get('/logout', (req, res) => {
 });
 
 // define single page application routes
+app.get('/users', (req, res) =>
+  res.sendFile(path.join(__dirname, 'views/users/users.html'))
+);
 app.get('/phosphorus', (req, res) =>
   res.sendFile(path.join(__dirname, 'views/phosphorus/phosphorus.html'))
 );
@@ -55,6 +63,9 @@ app.use('/api/phosphorus', require('./api/phosphorus'));
 app.use('/api/silver', require('./api/silver'));
 app.use('/api/tungsten', require('./api/tungsten'));
 app.use('/api/users', require('./api/users'));
+
+// define 404 route
+app.all('*', (req, res) => res.redirect('/'));
 
 // start application
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

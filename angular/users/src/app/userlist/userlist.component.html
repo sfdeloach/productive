@@ -1,0 +1,15 @@
+<a href="#">add new user</a>
+<table class="center" cellspacing="0">
+  <tr>
+    <th>name</th>
+    <th>email</th>
+    <th>access</th>
+    <th>&nbsp;</th>
+  </tr>
+  <tr *ngFor="let user of users">
+    <td>{{ user.name.last }}, {{ user.name.first }}</td>
+    <td>{{ user.username }}</td>
+    <td><pre>{{ user.access | json }}</pre></td>
+    <td><a href="#">edit</a></td>
+  </tr>
+</table>

@@ -3,12 +3,20 @@ const router = express.Router();
 
 const users = [
   {
-    username: 'username',
+    name: {
+      last: 'DeLoach',
+      first: 'Steven'
+    },
+    username: 'steven.deloach@email.com',
     password: 'password',
     access: 'fullAdminAccess'
   },
   {
-    username: 'phos-view',
+    name: {
+      last: 'Adams',
+      first: 'Alex'
+    },
+    username: 'alex.adams@email.com',
     password: 'password',
     access: {
       phosphorus: 'view',
@@ -16,7 +24,11 @@ const users = [
     }
   },
   {
-    username: 'phos-edit',
+    name: {
+      last: 'Baker',
+      first: 'Brian'
+    },
+    username: 'brian.baker@email.com',
     password: 'password',
     access: {
       phosphorus: 'edit'

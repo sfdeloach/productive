@@ -1,4 +1,4 @@
-## Angular Build Instructions
+# Angular Build Instructions
 
 Build application from within its project folder. The `base href` should match the single page route
 defined in the express `index.js` file:
