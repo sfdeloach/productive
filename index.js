@@ -1,7 +1,5 @@
 // TODO
 //
-// create angular app, develop build workflow
-//   build --prod=true --index="phosphorus.html" --base-href="/phosphorus"
 // passport w/ dummy db
 // mongoose w/ real db
 
@@ -17,7 +15,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // public access to static files (CSS, images, JavaScript)
-app.use(express.static(path.join(__dirname, 'dist/phosphorus')));
+app.use(express.static(path.join(__dirname, 'views/phosphorus')));
 
 // add middleware
 app.use(morgan('dev'));
