@@ -17,3 +17,5 @@ the contents are made publicaly available in express:
 
     // public access to static files (CSS, images, JavaScript)
     app.use(express.static(path.join(__dirname, 'views/phosphorus')));
+
+Delete the `favicon.ico` from the `/view` directory. The icon is provided by the server.

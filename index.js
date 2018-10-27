@@ -8,6 +8,7 @@
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
+const favicon = require('serve-favicon');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
@@ -18,14 +19,17 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // public access to static files (CSS, images, JavaScript)
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views/phosphorus')));
+app.use(express.static(path.join(__dirname, 'views/users')));
 
 // add middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan('dev'));
-app.use(helmet());
 app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(favicon(path.join(__dirname, 'public/icons/fire.ico')));
+app.use(helmet());
+app.use(morgan('dev'));
 
 // define main routes
 app.get('/', (req, res) =>

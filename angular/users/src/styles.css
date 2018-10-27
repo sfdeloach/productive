@@ -1,11 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
-  --primary: royalblue;
-  --primaryc: lightskyblue;
+  --primary: #344361;
+  --primaryc: #537396;
   --secondary: orangered;
   --secondaryc: coral;
   --light: snow;
   --dark: darkgray;
+}
+
+html,
+body {
+  margin: 0;
 }
 
 body {
@@ -21,6 +26,21 @@ body {
   );
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   background: linear-gradient(to right, #eaeaea, #dbdbdb, #f2f2f2, #ada996);
+}
+
+div.navbar {
+  background: #141e30; /* fallback for old browsers */
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, var(--primaryc), var(--primary));
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, var(--primaryc), var(--primary));
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 8em;
+  padding-right: 8em;
 }
 
 table.center {
@@ -45,6 +65,22 @@ a:visited {
   padding-bottom: 3px;
   padding-left: 10px;
   padding-right: 10px;
+  margin: 4px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a.navbar:link,
+a.navbar:visited {
+  background-color: transparent;
+  color: var(--light);
+  border: none;
+  padding-top: 3px;
+  padding-bottom: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 4px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -55,7 +91,23 @@ a:hover {
   color: var(--light);
 }
 
+a.navbar:hover {
+  background-color: transparent;
+  color: var(--dark);
+}
+
 a:active {
   background-color: var(--dark);
   color: var(--light);
+}
+
+a.navbar:active {
+  background-color: transparent;
+  color: var(--primary);
+}
+
+a.navbar.home {
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 0.25em 0;
 }
