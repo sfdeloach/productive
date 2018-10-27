@@ -1,16 +1,23 @@
+// TODO
+//
+// create angular app, develop build workflow
+//   build --prod=true --index="phosphorus.html" --base-href="/phosphorus"
+// passport w/ dummy db
+// mongoose w/ real db
+
 // import node modules
 const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 
-// define application constants
+// discover env variables and initialize application
 const port = process.env.PORT || 3000;
-const spaOptions = { root: path.join(__dirname, '/spas/') };
-const viewOptions = { root: path.join(__dirname, '/views/') };
-
-// create application
+// const dbConnection = process.env.DATABASE_URL || 'mongod://localhost:27017/flaltamontespringspd'
 const app = express();
+
+// public access to static files (CSS, images, JavaScript)
+app.use(express.static(path.join(__dirname, 'dist/phosphorus')));
 
 // add middleware
 app.use(morgan('dev'));
@@ -18,8 +25,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // define main routes
-app.get('/', (req, res) => res.sendFile('./home.html', viewOptions));
-app.get('/login', (req, res) => res.sendFile('./login.html', viewOptions));
+app.get('/', (req, res) =>
+  res.sendFile(path.join(__dirname, 'views/home.html'))
+);
+app.get('/login', (req, res) =>
+  res.sendFile(path.join(__dirname, 'views/login.html'))
+);
 app.post('/login', (req, res) => {
   console.log('body: ' + JSON.stringify(req.body));
   res.redirect('/');
@@ -30,13 +41,13 @@ app.get('/logout', (req, res) => {
 
 // define single page application routes
 app.get('/phosphorus', (req, res) =>
-  res.sendFile('./phosphorus/index.html', spaOptions)
+  res.sendFile(path.join(__dirname, 'views/phosphorus/phosphorus.html'))
 );
 app.get('/silver', (req, res) =>
-  res.sendFile('./silver/index.html', spaOptions)
+  res.sendFile(path.join(__dirname, 'views/silver/silver.html'))
 );
 app.get('/tungsten', (req, res) =>
-  res.sendFile('./tungsten/index.html', spaOptions)
+  res.sendFile(path.join(__dirname, 'views/tungsten/tungsten.html'))
 );
 
 // define api routes
