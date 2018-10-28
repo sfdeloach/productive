@@ -1,6 +1,5 @@
 // TODO:
 //
-// demonstrate api call work within angular app
 // passport w/ dummy db
 // mongoose w/ real db
 
@@ -8,14 +7,45 @@
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
+const expressSession = require('express-session');
 const favicon = require('serve-favicon');
+const flash = require('connect-flash');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const path = require('path');
 
-// discover env variables and initialize application
-// const dbConnection = process.env.DATABASE_URL || 'mongod://localhost:27017/flaltamontespringspd'
+// import custom modules
+const auth = require('./auth');
+
+// configure mongoose, connect to database (dummy db used)
+const db = require('./api/db');
+
+// configure passport local strategy
+passport.use(
+  new LocalStrategy((username, password, callback) => {
+    const user = db.findUserByUsername(username); // replace w/ call to db
+    if (!user || user.password != password) return callback(null, false);
+    return callback(null, user);
+  })
+);
+
+// configure authenticated session persistence
+passport.serializeUser((user, callback) => {
+  callback(null, user.id);
+});
+passport.deserializeUser((id, callback) => {
+  const user = db.findUserById(id);
+  if (!user) return new Error('deserialize, unable to find user');
+  callback(null, user);
+});
+
+// set environment variables if provided
 const port = process.env.PORT || 3000;
+const sessionSecret = process.env.SESSION_SECRET || 'keyboard cat';
+
+// initialize application
 const app = express();
 
 // public access to static files (CSS, images, JavaScript)
@@ -27,38 +57,19 @@ app.use(express.static(path.join(__dirname, 'views/users')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(
+  expressSession({
+    resave: false,
+    saveUninitialized: false,
+    secret: sessionSecret
+  })
+);
 app.use(favicon(path.join(__dirname, 'public/icons/fire.ico')));
+app.use(flash());
 app.use(helmet());
 app.use(morgan('dev'));
-
-// define main routes
-app.get('/', (req, res) =>
-  res.sendFile(path.join(__dirname, 'views/home.html'))
-);
-app.get('/login', (req, res) =>
-  res.sendFile(path.join(__dirname, 'views/login.html'))
-);
-app.post('/login', (req, res) => {
-  console.log('body: ' + JSON.stringify(req.body));
-  res.redirect('/');
-});
-app.get('/logout', (req, res) => {
-  res.redirect('/login');
-});
-
-// define single page application routes
-app.get('/users', (req, res) =>
-  res.sendFile(path.join(__dirname, 'views/users/users.html'))
-);
-app.get('/phosphorus', (req, res) =>
-  res.sendFile(path.join(__dirname, 'views/phosphorus/phosphorus.html'))
-);
-app.get('/silver', (req, res) =>
-  res.sendFile(path.join(__dirname, 'views/silver/silver.html'))
-);
-app.get('/tungsten', (req, res) =>
-  res.sendFile(path.join(__dirname, 'views/tungsten/tungsten.html'))
-);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // define api routes
 app.use('/api/assets', require('./api/assets'));
@@ -68,8 +79,43 @@ app.use('/api/silver', require('./api/silver'));
 app.use('/api/tungsten', require('./api/tungsten'));
 app.use('/api/users', require('./api/users'));
 
-// define 404 route
+// define main routes
+app.get('/', auth.isLoggedOn, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/home.html'));
+});
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/login.html'));
+});
+app.post(
+  '/login',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/login');
+});
+
+// define single page application routes
+app.get('/users', auth.usersView, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/users/users.html'));
+});
+app.get('/phosphorus', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/phosphorus/phosphorus.html'));
+});
+app.get('/silver', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/silver/silver.html'));
+});
+app.get('/tungsten', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/tungsten/tungsten.html'));
+});
+
+// define '404 Not Found' route
 app.all('*', (req, res) => res.redirect('/'));
 
 // start application
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () =>
+  console.log(`Productive app listening on port ${port}!`)
+);
