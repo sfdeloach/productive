@@ -10,7 +10,13 @@ let db = {
       },
       username: 'steven.deloach@email.com',
       password: 'password',
-      access: 'fullAdminAccess'
+      // access: 'logInOnly'
+      // access: 'fullAdminAccess'
+      access: {
+        phosphorus: 'edit',
+        'api/phosphorus': 'edit',
+        users: 'edit'
+      }
     },
     {
       id: '9c8d33ce-cff8-4694-843b-74417d1c6f9e',

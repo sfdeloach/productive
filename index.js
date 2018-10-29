@@ -71,6 +71,15 @@ app.use(morgan('dev'));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// allow flash messages to be visible in response
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.info = req.flash('info');
+  res.locals.error = req.flash('error');
+  // console.log(req.path);
+  next();
+});
+
 // define api routes
 app.use('/api/assets', require('./api/assets'));
 app.use('/api/employees', require('./api/employees'));
@@ -88,27 +97,28 @@ app.get('/login', (req, res) => {
 });
 app.post(
   '/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+  })
 );
-app.get('/logout', (req, res) => {
+app.get('/logout', auth.isLoggedOn, (req, res) => {
   req.logout();
   res.redirect('/login');
 });
 
 // define single page application routes
-app.get('/users', auth.usersView, (req, res) => {
+app.get('/users', auth.isView, (req, res) => {
   res.sendFile(path.join(__dirname, 'views/users/users.html'));
 });
-app.get('/phosphorus', (req, res) => {
+app.get('/phosphorus', auth.isView, (req, res) => {
   res.sendFile(path.join(__dirname, 'views/phosphorus/phosphorus.html'));
 });
-app.get('/silver', (req, res) => {
+app.get('/silver', auth.isView, (req, res) => {
   res.sendFile(path.join(__dirname, 'views/silver/silver.html'));
 });
-app.get('/tungsten', (req, res) => {
+app.get('/tungsten', auth.isView, (req, res) => {
   res.sendFile(path.join(__dirname, 'views/tungsten/tungsten.html'));
 });
 

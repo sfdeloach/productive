@@ -1,45 +1,53 @@
-const unauthorized =
-  '<h1>Error 401 - Unauthorized</h1><hr><h3>Access denied</h3>';
-const forbidden =
-  '<h1>Error 403 - Forbidden</h1><hr><h3>Account required for access</h3>';
-
-const auth = {};
+const auth = {
+  message: 'Access is not authorzied'
+};
 
 auth.isLoggedOn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   } else {
-    req.flash('error', '403 Forbidden - account required for login');
-    res.status(403);
-    res.send(forbidden);
+    req.flash('error', 'Login is required.');
+    res.redirect('/login');
   }
 };
 
-auth.usersView = (req, res, next) => {
+auth.isView = (req, res, next) => {
+  const resource = req.originalUrl.slice(1);
+  console.log(resource);
   if (
     req.isAuthenticated() &&
     (req.user.access === 'fullAdminAccess' ||
-      req.user.access.users === 'view' ||
-      req.user.access.users === 'edit')
+      (req.user.access[resource] &&
+        (req.user.access[resource] === 'edit' ||
+          req.user.access[resource] === 'view')))
   ) {
     return next();
   } else {
-    req.flash('error', '401 Unauthorized - access denied');
-    res.status(401);
-    res.send(unauthorized);
+    req.flash('error', auth.message);
+    res.redirect('/');
   }
 };
 
-auth.usersEdit = (req, res, next) => {
+auth.isEdit = (req, res, next) => {
+  const resource = req.path.slice(1);
   if (
     req.isAuthenticated() &&
-    (req.user.access === 'fullAdminAccess' || req.user.access.users === 'edit')
+    (req.user.access === 'fullAdminAccess' ||
+      (req.user.access[resource] && req.user.access[resource] === 'edit'))
   ) {
     return next();
   } else {
-    req.flash('error', '401 Unauthorized - access denied');
-    res.status(401);
-    res.send(unauthorized);
+    req.flash('error', auth.message);
+    res.redirect('/');
+  }
+};
+
+auth.isAdmin = (req, res, next) => {
+  if (req.isAuthenticated() && req.user.access === 'fullAdminAccess') {
+    return next();
+  } else {
+    req.flash('error', auth.message);
+    res.redirect('/');
   }
 };
 
