@@ -56,7 +56,7 @@ app.use(express.static(path.join(__dirname, 'views/users')));
 // add middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(cors({ origin: 'http://localhost:4200' })); // dev settings
 app.use(
   expressSession({
     resave: false,

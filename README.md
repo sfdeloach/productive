@@ -6,7 +6,7 @@
 * **easy** - pull data via existing interface such as MS Access or Crystal Reports
 
 ## 2 conversion
-* **DC2** - prepare extracted data for use
+* **C2J** - prepare extracted data for use
 
 *sensitive data is prepared and stored locally*
 
