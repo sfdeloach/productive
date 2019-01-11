@@ -1,9 +1,7 @@
 # Productive
 
 ## 1 extraction
-* **easiest** - publicly available API or database connection *---or---*
-* **easier** - automation via command line script within private network *---or---*
-* **easy** - pull data via existing interface such as MS Access or Crystal Reports
+* **excavator** - java based command line app, pull data from tables
 
 ## 2 conversion
 * **C2J** - prepare extracted data for use
